@@ -3,8 +3,8 @@ import { FC, SyntheticEvent, useEffect, useState } from 'react';
 import {
   getUserSelector,
   updateUserQuery
-} from '../../services/slices/userSlice';
-import { useSelector, useDispatch } from '../../services/store';
+} from '../../services/slices/userSlice/userSlice';
+import { useSelector, useDispatch } from '../../services/store/store';
 
 export const Profile: FC = () => {
   /** TODO: взять переменную из стора */

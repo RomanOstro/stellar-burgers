@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit';
 import { TIngredient } from '@utils-types';
-import { TConstructorIngredient } from '@utils-types';
+import { TConstructorIngredient, TOrder } from '@utils-types';
 import { PayloadAction } from '@reduxjs/toolkit';
-import { orderBurgerApi } from '@api';
+import { orderBurgerApi, TNewOrderResponse } from '../../../utils/burger-api';
 
 export const orderBurgerQuery = createAsyncThunk(
   'order/burger',
-  async (data: string[]) => orderBurgerApi(data)
+  orderBurgerApi
 );
 
 type IConstructorState = {
@@ -15,11 +15,12 @@ type IConstructorState = {
     bun: TConstructorIngredient | null;
     ingredients: TConstructorIngredient[];
   };
-  orderModalData: any;
+  orderModalData: TOrder | null;
   error: string | null;
 };
 
-const initialState: IConstructorState = {
+// Экспортируем для теста
+export const initialState: IConstructorState = {
   orderRequest: false,
   constructorItems: {
     bun: null,
@@ -79,7 +80,8 @@ export const constructorSlice = createSlice({
     },
 
     resetOrder: (state) => {
-      (state.orderModalData = null), (state.orderRequest = false);
+      state.orderModalData = null;
+      state.orderRequest = false;
     }
   },
 
@@ -91,8 +93,8 @@ export const constructorSlice = createSlice({
       })
 
       .addCase(orderBurgerQuery.rejected, (state, action) => {
-        (state.orderRequest = false),
-          (state.error = action.error.message || `error`);
+        state.orderRequest = false;
+        state.error = action.error.message || `error`;
       })
 
       .addCase(orderBurgerQuery.fulfilled, (state, action) => {
