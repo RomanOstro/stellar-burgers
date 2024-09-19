@@ -1,5 +1,5 @@
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getIngredientsApi } from '@api';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getIngredientsApi } from '../../../utils/burger-api';
 import { TIngredient } from '@utils-types';
 
 //Асинхронная функция для запроса ингредиентов с сервера
@@ -13,7 +13,7 @@ type IIngridientState = {
   error: string | null;
 };
 
-const initialState: IIngridientState = {
+export const initialState: IIngridientState = {
   ingredients: [],
   loading: false,
   error: null
@@ -35,7 +35,8 @@ export const ingridientSlice = createSlice({
       })
       .addCase(getIngredients.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || `error`; //Правильно ли здесь указать || null
+        state.error =
+          action.error.message || `[getIngredients] data request error`;
       })
       .addCase(getIngredients.fulfilled, (state, action) => {
         state.loading = false;

@@ -6,9 +6,9 @@ import { useParams } from 'react-router-dom';
 import {
   getOrderInfo,
   getOrdersInfoSelector
-} from '../../services/slices/ordersSlice';
-import { useDispatch, useSelector } from '../../services/store';
-import { ingredientSelector } from '../../services/slices/ingredientsSlice';
+} from '../../services/slices/ordersSlice/ordersSlice';
+import { useDispatch, useSelector } from '../../services/store/store';
+import { ingredientSelector } from '../../services/slices/ingredientsSlice/ingredientsSlice';
 
 export const OrderInfo: FC = () => {
   const dispatch = useDispatch();

@@ -1,14 +1,11 @@
-import { getFeedsApi, getOrderByNumberApi } from '@api';
+import { getFeedsApi, getOrderByNumberApi } from '../../../utils/burger-api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
 
-export const getOrdersQuery = createAsyncThunk('feeds/api', async () =>
-  getFeedsApi()
-);
-
-export const getOrderInfo = createAsyncThunk('order/info', async (id: number) =>
-  getOrderByNumberApi(id)
-);
+// Запрос истории заказов
+export const getOrdersQuery = createAsyncThunk('feeds/api', getFeedsApi);
+//  запрос выбора заказа по id в истории заказов
+export const getOrderInfo = createAsyncThunk('order/info', getOrderByNumberApi);
 
 type IOrdersState = {
   orderData: TOrder | null;
@@ -19,7 +16,7 @@ type IOrdersState = {
   error: string | null;
 };
 
-const initialState: IOrdersState = {
+export const initialState: IOrdersState = {
   orderData: null,
   orders: [],
   loading: false,
@@ -38,11 +35,13 @@ export const ordersSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getOrdersQuery.pending, (state) => {
-        (state.loading = true), (state.error = null);
+        state.loading = true;
+        state.error = null;
       })
 
       .addCase(getOrdersQuery.rejected, (state, action) => {
-        (state.loading = false), (state.error = action.error as string);
+        state.loading = false;
+        state.error = action.error.message as string;
       })
 
       .addCase(getOrdersQuery.fulfilled, (state, action) => {

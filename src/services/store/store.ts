@@ -5,19 +5,19 @@ import {
   useDispatch as dispatchHook,
   useSelector as selectorHook
 } from 'react-redux';
-import { ingridientSlice } from './slices/ingredientsSlice';
-import { constructorSlice } from './slices/burgerConstructorSlice';
-import { ordersSlice } from './slices/ordersSlice';
-import { userSlice } from './slices/userSlice';
+import { ingridientSlice } from '../slices/ingredientsSlice/ingredientsSlice';
+import { constructorSlice } from '../slices/burgerConstructorSlice/burgerConstructorSlice';
+import { ordersSlice } from '../slices/ordersSlice/ordersSlice';
+import { userSlice } from '../slices/userSlice/userSlice';
 
-const rootReducer = combineSlices(
+export const rootReducer = combineSlices(
   ingridientSlice,
   constructorSlice,
   ordersSlice,
   userSlice
 );
 
-const store = configureStore({
+export const store = configureStore({
   reducer: rootReducer,
   devTools: process.env.NODE_ENV !== 'production'
 });
