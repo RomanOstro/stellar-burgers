@@ -6,5 +6,7 @@ export default defineConfig({
       // implement node event listeners here
     
     },
+    // Прописываем базовый URl для быстрого доступа
+    baseUrl:'http://localhost:4000/',
   },
 });
