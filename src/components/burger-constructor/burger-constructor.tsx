@@ -1,17 +1,17 @@
 import { FC, useMemo } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
-import { useSelector } from '../../services/store';
+import { useSelector } from '../../services/store/store';
 import {
   getConstructorSelector,
   getOrderRequestSelector,
   getOrderModalDataSelector
-} from '../../services/slices/burgerConstructorSlice';
+} from '../../services/slices/burgerConstructorSlice/burgerConstructorSlice';
 import {
   orderBurgerQuery,
   resetOrder
-} from '../../services/slices/burgerConstructorSlice';
-import { useDispatch } from '../../services/store';
+} from '../../services/slices/burgerConstructorSlice/burgerConstructorSlice';
+import { useDispatch } from '../../services/store/store';
 import { getCookie } from '../../utils/cookie';
 import { useNavigate } from 'react-router-dom';
 

@@ -9,56 +9,70 @@ import {
   TLoginData,
   TRegisterData,
   updateUserApi
-} from '@api';
-import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+} from '../../../utils/burger-api';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { TOrder, TUser } from '@utils-types';
-import { access } from 'fs';
-import { deleteCookie, setCookie } from '../../utils/cookie';
+import { deleteCookie, setCookie } from '../../../utils/cookie';
 //  Запросы потом возможно лучше вынести в отдельный файл
 //Запрос для получения истории заказов
-export const getOrdersQuery = createAsyncThunk('user/orders', async () =>
-  getOrdersApi()
-);
+export const getOrdersQuery = createAsyncThunk('user/orders', getOrdersApi);
+
 // Запрос регистрации
 export const registerUserQuery = createAsyncThunk(
   'user/register',
-  async (data: TRegisterData) => registerUserApi(data)
+  async (data: TRegisterData) => {
+    const dataResponce = await registerUserApi(data);
+    if (!dataResponce.success) {
+      return Promise.reject(dataResponce);
+    }
+    setCookie('accessToken', dataResponce.accessToken);
+    localStorage.setItem('refreshToken', dataResponce.refreshToken);
+    return dataResponce;
+  }
 );
 
 // Запрос входа в приложение
 export const loginUserQuery = createAsyncThunk(
   'user/login',
-  async (data: TLoginData) => loginUserApi(data)
+  async (data: TLoginData) => {
+    const dataResponce = await loginUserApi(data);
+    if (!dataResponce.success) {
+      return Promise.reject(dataResponce);
+    }
+    setCookie('accessToken', dataResponce.accessToken);
+    localStorage.setItem('refreshToken', dataResponce.refreshToken);
+    return dataResponce;
+  }
 );
 
 // Запрос если забыли пароль
 export const forgotPasswordQuery = createAsyncThunk(
   'user/fogotPass',
-  async (data: { email: string }) => forgotPasswordApi(data)
+  forgotPasswordApi
 );
 
 // Запрос сброс пароля
 export const resetPasswordQuery = createAsyncThunk(
   'user/resetPass',
-  async (data: { password: string; token: string }) => resetPasswordApi(data)
+  resetPasswordApi
 );
 
 //Проверка авторизован ли пользователь или нет
-export const getUserQuery = createAsyncThunk('user/getUser', async () =>
-  getUserApi()
-);
+export const getUserQuery = createAsyncThunk('user/getUser', getUserApi);
 
 //Запрос обновления данных пользователя
 export const updateUserQuery = createAsyncThunk(
   'user/updateUser',
-  async (user: Partial<TRegisterData>) => updateUserApi(user)
+  updateUserApi
 );
 
 // запрос - Выход из аккаунта
-export const logoutQuery = createAsyncThunk('user/logout', async () =>
-  logoutApi()
-);
+export const logoutQuery = createAsyncThunk('user/logout', async () => {
+  await logoutApi();
+  deleteCookie('accessToken');
+  localStorage.removeItem('refreshToken');
+});
 
 type TUserState = {
   loading: boolean;
@@ -67,7 +81,7 @@ type TUserState = {
   orders: TOrder[];
 };
 
-const initialState: TUserState = {
+export const initialState: TUserState = {
   loading: false,
   error: null,
   userData: {
@@ -94,14 +108,12 @@ export const userSlice = createSlice({
       })
       .addCase(registerUserQuery.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error as string;
+        state.error = action.error?.message as string;
       })
       .addCase(registerUserQuery.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
         state.userData = action.payload.user;
-        setCookie('accessToken', action.payload.accessToken);
-        localStorage.setItem('refreshToken', action.payload.refreshToken);
       })
       // Обработка запросапри вводе логина/пароля
       .addCase(loginUserQuery.pending, (state) => {
@@ -110,14 +122,12 @@ export const userSlice = createSlice({
       })
       .addCase(loginUserQuery.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error as string;
+        state.error = action.error.message as string;
       })
       .addCase(loginUserQuery.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
         state.userData = action.payload.user;
-        setCookie('accessToken', action.payload.accessToken);
-        localStorage.setItem('refreshToken', action.payload.refreshToken);
       })
       // Обработка запроса получения данных пользователя
       .addCase(getUserQuery.pending, (state) => {
@@ -126,7 +136,7 @@ export const userSlice = createSlice({
       })
       .addCase(getUserQuery.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error as string;
+        state.error = action.error.message as string;
       })
       .addCase(getUserQuery.fulfilled, (state, action) => {
         state.loading = false;
@@ -140,7 +150,7 @@ export const userSlice = createSlice({
       })
       .addCase(updateUserQuery.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error as string;
+        state.error = action.error.message as string;
       })
       .addCase(updateUserQuery.fulfilled, (state, action) => {
         state.loading = false;
@@ -154,7 +164,7 @@ export const userSlice = createSlice({
       })
       .addCase(getOrdersQuery.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error as string;
+        state.error = action.error.message as string;
       })
       .addCase(getOrdersQuery.fulfilled, (state, action) => {
         state.loading = false;
@@ -168,7 +178,7 @@ export const userSlice = createSlice({
       })
       .addCase(logoutQuery.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error as string;
+        state.error = action.error.message as string;
       })
       .addCase(logoutQuery.fulfilled, (state) => {
         state.loading = false;
@@ -176,8 +186,6 @@ export const userSlice = createSlice({
         state.userData.email = '';
         state.userData.name = '';
         state.orders = [];
-        deleteCookie('accessToken');
-        localStorage.removeItem('refreshToken');
       });
   }
 });
