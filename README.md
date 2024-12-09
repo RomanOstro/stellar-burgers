@@ -1,19 +1,62 @@
-# Проектная работа 11-го спринта
+# Проект Stellar Burger
 
-[Макет](<https://www.figma.com/file/vIywAvqfkOIRWGOkfOnReY/React-Fullstack_-Проектные-задачи-(3-месяца)_external_link?type=design&node-id=0-1&mode=design>)
+Стек: HTML, SCSS, TS, React, Redux, Webpack
 
-[Чеклист](https://www.notion.so/praktikum/0527c10b723d4873aa75686bad54b32e?pvs=4)
+Структура проекта:
 
-## Этапы работы:
+- src/ — исходные файлы проекта
+- src/components/ — папка с JSX компонентами
+- src/components/services/slices -  папка с слайсами и Unit-тестами
+- src/components/services - папка с глобальным хранилищем Redux
 
-1. Разверните проект и ознакомьтесь с кодом. Все необходимые вам компоненты уже созданы и лежат в папке `src/components`
+Важные файлы:
+ - src/utils/burger-api - файл с запросами к серверу
+ - src/utils/types - файл с типами
 
-2. Настройте роутинг.
 
-3. Напишите функционал запросов данных с сервера, используя `Redux` и глобальный `store`. Сами "ручки" уже прописаны и лежат в `utils/burger-api.ts`
+ ## Установка и запуск
 
-4. Настройте авторизацию и создайте защищённые роуты.
+Для установки и запуска проекта необходимо выполнить команды
 
-## Важно:
+```
+npm install
+npm run start
+```
 
-Для корректной работы запросов к серверу необходимо добавить переменную BURGER_API_URL в окружение. Сама ссылка находится в файле `.env.example`.
+или
+
+```
+yarn
+yarn start
+```
+
+## Сборка
+
+```
+npm run build
+```
+
+или
+
+```
+yarn build
+```
+
+## Запуск документации Storybook
+
+```
+npm run storybook
+```
+
+## Базовый код
+### Api (src/utils/burger-api)
+Файл отвечает за запросы к серверу:\
+Методы Api:\
+`checkResponse`  - проверка успешного ответа с сервера\
+`refreshToken` - получение refreshToken\
+`fetchWithRefresh` - GET запрос с обновлением токена\
+`getIngredientsApi` - запрос на получение ингредиентов с сервера\
+`getFeedsApi` - запрос на получение истории заказов
+
+
+
